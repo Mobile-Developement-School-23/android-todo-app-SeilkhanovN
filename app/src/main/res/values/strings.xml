@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">ToDo app</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="opt1_normal">Нет</string>
+    <string name="opt2_low">Низкий</string>
+    <string name="opt3_urgent">!!Высокий</string>
+</resources>
