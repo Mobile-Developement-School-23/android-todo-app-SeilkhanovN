@@ -1,4 +1,4 @@
-package com.example.todoapp
+package com.example.todoapp.ui
 
 import android.os.Bundle
 import android.util.Log
@@ -7,9 +7,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
+import com.example.todoapp.R
+import com.example.todoapp.repository.TodoItemsRepository
 
 class TodosFragment: Fragment() {
     override fun onCreateView(

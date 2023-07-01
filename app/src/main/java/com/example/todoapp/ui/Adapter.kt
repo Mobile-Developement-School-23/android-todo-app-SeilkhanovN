@@ -1,15 +1,15 @@
-package com.example.todoapp
+package com.example.todoapp.ui
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
-import android.widget.ImageButton
 import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.RecyclerView.LayoutManager
+import com.example.todoapp.R
+import com.example.todoapp.repository.TodoItem
 
 class Adapter : ListAdapter<TodoItem, Adapter.ViewHolder>(TodoDiffUtil()) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {

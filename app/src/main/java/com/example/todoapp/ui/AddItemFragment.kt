@@ -1,19 +1,20 @@
-package com.example.todoapp
+package com.example.todoapp.ui
 
 import android.app.DatePickerDialog
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.*
-import android.widget.AdapterView
 import android.widget.Button
-import android.widget.EditText
 import android.widget.TextView
 import androidx.annotation.MenuRes
 import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import com.google.android.material.appbar.AppBarLayout
+import com.example.todoapp.repository.Importance
+import com.example.todoapp.R
+import com.example.todoapp.repository.TodoItem
+import com.example.todoapp.repository.TodoItemsRepository
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.switchmaterial.SwitchMaterial
 import com.google.android.material.textfield.TextInputEditText

@@ -1,8 +1,6 @@
-package com.example.todoapp
+package com.example.todoapp.repository
 
-import com.google.android.material.textfield.TextInputLayout
 import java.time.LocalDateTime
-import java.util.Date
 
 data class TodoItem(
     var id: String,

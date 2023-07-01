@@ -1,7 +1,4 @@
-package com.example.todoapp
-
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+package com.example.todoapp.repository
 
 object TodoItemsRepository  {
     val todoitems : MutableList<TodoItem> = mutableListOf()
