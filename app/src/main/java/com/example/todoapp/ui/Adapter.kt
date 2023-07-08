@@ -9,30 +9,58 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.todoapp.R
+import com.example.todoapp.databinding.ItemTodoBinding
+import com.example.todoapp.repository.Importance
 import com.example.todoapp.repository.TodoItem
 
 class Adapter : ListAdapter<TodoItem, Adapter.ViewHolder>(TodoDiffUtil()) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context).
-                inflate(R.layout.item_todo, parent, false)
-        return ViewHolder(view)
+        val view = ViewHolder(
+            ItemTodoBinding.inflate(
+                LayoutInflater.from(parent.context), parent, false
+            )
+        )
+        return view
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val task = getItem(position)
-        holder.isDone.isChecked = task.isDone
-        holder.text.text = task.text
-
+        holder.bind(task)
     }
 
-    class ViewHolder (item: View) : RecyclerView.ViewHolder(item){
-        val isDone = item.findViewById<CheckBox>(R.id.ibIsDone)
-        val text = item.findViewById<TextView>(R.id.tvText)
-    }
+    class ViewHolder(private val binding: ItemTodoBinding) : RecyclerView.ViewHolder(binding.root) {
+        fun bind(task: TodoItem) {
+            with(binding) {
+                tvText.text = task.text
 
+                ibIsDone.isChecked = task.isDone
+                ibIsDone.setOnClickListener {
+                    task.isDone = ibIsDone.isChecked
+                    tvText.paint.isStrikeThruText = ibIsDone.isChecked
+                    tvText.invalidate()
+                }
+
+                if (task.deadline != null) {
+                    tvDeadline.text = task.deadline.toString()
+                    tvDeadline.visibility = View.VISIBLE
+                } else {
+                    tvDeadline.visibility = View.GONE
+                }
+
+                when (task.importance) {
+                    Importance.LOW -> ivImportance.setImageResource(R.drawable.ic_arrow_down)
+                    Importance.NORMAL -> ivImportance.visibility = View.GONE
+                    Importance.URGENT -> {
+                        ivImportance.setImageResource(R.drawable.ic_warning)
+                        ibIsDone.isErrorShown = true
+                    }
+                }
+            }
+        }
+    }
 }
 
-class TodoDiffUtil: DiffUtil.ItemCallback<TodoItem>(){
+class TodoDiffUtil : DiffUtil.ItemCallback<TodoItem>() {
 
 
     override fun areItemsTheSame(oldItem: TodoItem, newItem: TodoItem): Boolean {

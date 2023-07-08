@@ -8,11 +8,14 @@ import android.view.*
 import android.widget.Button
 import android.widget.TextView
 import androidx.annotation.MenuRes
+import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.todoapp.repository.Importance
 import com.example.todoapp.R
+import com.example.todoapp.databinding.FragmentAddItemBinding
 import com.example.todoapp.repository.TodoItem
 import com.example.todoapp.repository.TodoItemsRepository
 import com.google.android.material.appbar.MaterialToolbar
@@ -25,44 +28,59 @@ import java.util.*
 class AddItemFragment : Fragment() {
     val newid = (TodoItemsRepository.todoitems.size.plus(1)).toString()
     var todo = TodoItem(newid, "")
+    lateinit var binding : FragmentAddItemBinding
+    private val viewmodel : AddItemViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_add_item, container, false)
-        val menuImp = view.findViewById<TextView>(R.id.tvOpenMenu)
-        menuImp.setOnClickListener{
+        binding = FragmentAddItemBinding.inflate(inflater, container, false)
+
+        var isNew = true
+        binding.tvOpenMenu.setOnClickListener{
             showMenu(it, R.menu.menu_importance)
         }
 
-        val switch = view.findViewById<SwitchMaterial>(R.id.swDeadline)
-        val deadline = view.findViewById<TextView>(R.id.tvDeadline)
-        switch.setOnCheckedChangeListener { buttonView, isChecked ->
-            if(isChecked){
-                showCalendar(deadline)
-            }
-            else {
-                deadline.text = ""
-                todo.deadline = null
-            }
-        }
+        isDeadlineNeed(binding.swDeadline)
 
-        val appbar = view.findViewById<MaterialToolbar>(R.id.tabButtons)
-        val delete = view.findViewById<Button>(R.id.btnDelete)
-        appbar.setNavigationOnClickListener {
+        binding.tabButtons.setNavigationOnClickListener {
             findNavController().navigate(R.id.action_addItemFragment_to_todosFragment)
         }
-        delete.setOnClickListener {
+        binding.btnDelete.setOnClickListener {
             findNavController().navigate(R.id.action_addItemFragment_to_todosFragment)
         }
-
-
 
         return view
     }
 
-    fun showMenu(v: View, @MenuRes menuRes: Int) {
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun addTodoItem(isNew : Boolean) {
+        with(viewmodel.currentItem) {
+            text = binding.etTodo.text.toString()
+            if(isNew){
+                id = UUID.randomUUID().toString()
+                creationDate = LocalDateTime.now()
+            }
+            else{
+                modificationDate = LocalDateTime.now()
+            }
+        }
+    }
+
+    private fun isDeadlineNeed(switch: SwitchMaterial) {
+        switch.setOnCheckedChangeListener { buttonView, isChecked ->
+            if(isChecked){
+                showCalendar(binding.tvDeadline)
+            }
+            else {
+                binding.tvDeadline.text = ""
+                todo.deadline = null
+            }
+        }
+    }
+
+    fun showMenu(v: View, @MenuRes menuRes: Int)  {
         val popup = PopupMenu(requireContext(), v)
         popup.menuInflater.inflate(menuRes, popup.menu)
         popup.setOnMenuItemClickListener { menuItem: MenuItem ->
@@ -70,15 +88,15 @@ class AddItemFragment : Fragment() {
             when(menuItem.title) {
                 "Нет" -> {
                     (v as TextView).text = menuItem.title.toString()
-                    todo.importance = Importance.NORMAL
+                    viewmodel.currentItem.importance = Importance.NORMAL
                 }
                 "Низкий" -> {
                     (v as TextView).text = menuItem.title.toString()
-                    todo.importance = Importance.LOW
+                    viewmodel.currentItem.importance = Importance.LOW
                 }
                 "!!Высокий" -> {
                     (v as TextView).text = menuItem.title.toString()
-                    todo.importance = Importance.URGENT
+                    viewmodel.currentItem.importance = Importance.URGENT
                 }
             }
             Log.d("Popup menu", menuItem.itemId.toString())
@@ -103,7 +121,7 @@ class AddItemFragment : Fragment() {
                 val dat = ((if(days < 10) "0"  else "") + days + "/" + (if(months + 1 < 10) "0"  else "") + (months + 1) + "/" + years)
                 tv.setText(dat)
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    todo.deadline = LocalDateTime.of(years, Month.of(months+1), days, 0, 0 ,0)
+                    viewmodel.currentItem.deadline = LocalDateTime.of(years, Month.of(months+1), days, 0, 0 ,0)
                 }
             }, year, month, day)
         datePickerDialog.show()

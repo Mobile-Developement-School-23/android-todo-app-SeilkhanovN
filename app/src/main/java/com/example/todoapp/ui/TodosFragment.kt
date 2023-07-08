@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.todoapp.R
+import com.example.todoapp.databinding.FragmentTodosBinding
 import com.example.todoapp.repository.TodoItemsRepository
 
 class TodosFragment: Fragment() {
@@ -17,25 +18,24 @@ class TodosFragment: Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        val view = layoutInflater.inflate(R.layout.fragment_todos, container, false)
-        val recView = view.findViewById<RecyclerView>(R.id.rvItems)
-        val adapter = Adapter()
-        recView.adapter = adapter
-        TodoItemsRepository.todoitems.forEach {
-            Log.d("NurdauletTodo", it.text)
-        }
-        adapter.submitList(TodoItemsRepository.todoitems)
+    ): View {
+        val binding = FragmentTodosBinding.inflate(inflater, container, false)
 
+        setupRecyclerView(binding.rvItems)
 
-        view.findViewById<Button>(R.id.btnAddItemPage).setOnClickListener {
+        binding.btnAddItemPage.setOnClickListener {
             findNavController().navigate(R.id.action_todosFragment_to_addItemFragment)
         }
 
-
-
-        return view
+        return binding.root
     }
+
+    private fun setupRecyclerView(recView : RecyclerView) {
+        val adapter = Adapter()
+        recView.adapter = adapter
+        adapter.submitList(TodoItemsRepository.todoitems)
+    }
+
 
 
 }
