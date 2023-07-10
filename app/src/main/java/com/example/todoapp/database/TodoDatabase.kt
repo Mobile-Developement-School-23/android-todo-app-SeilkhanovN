@@ -9,7 +9,7 @@ import com.example.todoapp.repository.TodoItem
 
 @Database(entities = [TodoItem::class], version = 1)
 abstract class TodoDatabase : RoomDatabase() {
-    abstract fun stocksDatabaseDao() : TodoDao
+    abstract fun todoDatabaseDao() : TodoDao
 
     companion object{
         @Volatile

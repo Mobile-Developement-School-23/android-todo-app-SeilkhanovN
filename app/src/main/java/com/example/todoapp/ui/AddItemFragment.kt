@@ -13,6 +13,7 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import com.example.todoapp.App
 import com.example.todoapp.repository.Importance
 import com.example.todoapp.R
 import com.example.todoapp.databinding.FragmentAddItemBinding
@@ -26,10 +27,8 @@ import java.time.Month
 import java.util.*
 
 class AddItemFragment : Fragment() {
-    val newid = (TodoItemsRepository.todoitems.size.plus(1)).toString()
-    var todo = TodoItem(newid, "")
     lateinit var binding : FragmentAddItemBinding
-    private val viewmodel : AddItemViewModel by viewModels()
+    private val viewmodel : AddItemViewModel by viewModels {ViewModelFactory((requireContext() as App).repository)}
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -51,19 +50,27 @@ class AddItemFragment : Fragment() {
             findNavController().navigate(R.id.action_addItemFragment_to_todosFragment)
         }
 
+        saveTodoItem(isNew)
+
         return view
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
+
     private fun addTodoItem(isNew : Boolean) {
         with(viewmodel.currentItem) {
             text = binding.etTodo.text.toString()
             if(isNew){
                 id = UUID.randomUUID().toString()
-                creationDate = LocalDateTime.now()
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    creationDate = System.currentTimeMillis().toString()
+                }
+                viewmodel.addItem(this)
             }
             else{
-                modificationDate = LocalDateTime.now()
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    modificationDate = System.currentTimeMillis().toString()
+                }
+                viewmodel.addItem(this)
             }
         }
     }
@@ -75,7 +82,7 @@ class AddItemFragment : Fragment() {
             }
             else {
                 binding.tvDeadline.text = ""
-                todo.deadline = null
+                viewmodel.currentItem.deadline = null
             }
         }
     }
@@ -121,23 +128,27 @@ class AddItemFragment : Fragment() {
                 val dat = ((if(days < 10) "0"  else "") + days + "/" + (if(months + 1 < 10) "0"  else "") + (months + 1) + "/" + years)
                 tv.setText(dat)
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    viewmodel.currentItem.deadline = LocalDateTime.of(years, Month.of(months+1), days, 0, 0 ,0)
+                    viewmodel.currentItem.deadline = "$days/$months/$years"
                 }
             }, year, month, day)
         datePickerDialog.show()
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.btnSave -> {
-                todo.text = view?.findViewById<TextInputEditText>(R.id.etTodo)?.text.toString()
-                if(!todo.text.isEmpty()) {
-                    TodoItemsRepository.todoitems.add(todo)
-                    findNavController().navigate(R.id.action_addItemFragment_to_todosFragment)
+    fun saveTodoItem(isNew : Boolean) {
+        binding.tabButtons.inflateMenu(R.menu.menu_add_page)
+        binding.tabButtons.setOnMenuItemClickListener {
+            when(it.itemId){
+                R.id.btnSave -> {
+                    if (!viewmodel.currentItem.text.isEmpty()) {
+                        addTodoItem(isNew)
+                        findNavController().navigate(R.id.action_addItemFragment_to_todosFragment)
+                    }
+                    true
                 }
-                true
+                else -> {Log.d("Save todo", "Fill editText")
+                    true
+                }
             }
-            else -> super.onOptionsItemSelected(item)
         }
     }
 

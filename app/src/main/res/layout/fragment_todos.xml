@@ -20,11 +20,29 @@
         android:id="@+id/tvDone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Выполнено - 3"
+        android:text="Выполнено - "
         android:textSize="20dp"
         android:layout_marginTop="10dp"
         app:layout_constraintStart_toStartOf="@+id/tvMyTodos"
         app:layout_constraintTop_toBottomOf="@+id/tvMyTodos" />
+
+    <TextView
+        android:id="@+id/tvCount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="3"
+        android:textSize="20sp"
+        app:layout_constraintStart_toEndOf="@id/tvDone"
+        app:layout_constraintTop_toTopOf="@id/tvDone"/>
+
+    <CheckBox
+        android:id="@+id/cbHideDone"
+        android:layout_width="30dp"
+        android:layout_height="20dp"
+        android:layout_margin="10dp"
+        android:button="@drawable/bg_hide_show_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/rvItems"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvItems"

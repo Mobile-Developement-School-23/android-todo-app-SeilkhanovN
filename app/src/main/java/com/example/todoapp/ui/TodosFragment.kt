@@ -7,19 +7,31 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
+import com.example.todoapp.App
 import com.example.todoapp.R
 import com.example.todoapp.databinding.FragmentTodosBinding
+import com.example.todoapp.repository.TodoItem
 import com.example.todoapp.repository.TodoItemsRepository
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.flatMapConcat
+import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.launch
 
 class TodosFragment: Fragment() {
+    lateinit var binding: FragmentTodosBinding
+    private val viewmodel : TodosViewModel by viewModels {ViewModelFactory((requireContext() as App).repository)}
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val binding = FragmentTodosBinding.inflate(inflater, container, false)
+
+        binding = FragmentTodosBinding.inflate(inflater, container, false)
 
         setupRecyclerView(binding.rvItems)
 
@@ -33,7 +45,17 @@ class TodosFragment: Fragment() {
     private fun setupRecyclerView(recView : RecyclerView) {
         val adapter = Adapter()
         recView.adapter = adapter
-        adapter.submitList(TodoItemsRepository.todoitems)
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewmodel.todoList.collectLatest {
+                if(!binding.cbHideDone.isChecked){
+                    adapter.submitList(it)
+                }
+                else {
+                    adapter.submitList(it.filter { !it.isDone })
+                }
+            }
+        }
+
     }
 
 
