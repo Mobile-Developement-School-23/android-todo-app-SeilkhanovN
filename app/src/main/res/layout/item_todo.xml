@@ -41,4 +41,12 @@
         app:layout_constraintStart_toEndOf="@+id/ivImportance"
         app:layout_constraintTop_toBottomOf="@+id/tvText" />
 
+    <View
+        android:id="@+id/dividerItem"
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="@color/black"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
