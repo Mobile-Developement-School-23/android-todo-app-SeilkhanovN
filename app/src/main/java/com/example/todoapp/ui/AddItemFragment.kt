@@ -1,45 +1,45 @@
 package com.example.todoapp.ui
+import android.app.ActionBar
 import android.app.DatePickerDialog
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import android.view.*
-import android.widget.Button
+import android.view.LayoutInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toolbar
 import androidx.annotation.MenuRes
-import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.todoapp.App
-import com.example.todoapp.repository.Importance
 import com.example.todoapp.R
 import com.example.todoapp.databinding.FragmentAddItemBinding
-import com.example.todoapp.repository.TodoItem
-import com.example.todoapp.repository.TodoItemsRepository
-import com.google.android.material.appbar.MaterialToolbar
+import com.example.todoapp.repository.Importance
 import com.google.android.material.switchmaterial.SwitchMaterial
-import com.google.android.material.textfield.TextInputEditText
-import java.time.LocalDateTime
-import java.time.Month
-import java.util.*
+import java.util.Calendar
+import java.util.UUID
 
 class AddItemFragment : Fragment() {
     lateinit var binding : FragmentAddItemBinding
-    private val viewmodel : AddItemViewModel by viewModels {ViewModelFactory((requireContext() as App).repository)}
+    private val viewmodel : AddItemViewModel by viewModels {ViewModelFactory((requireContext().applicationContext as App).repository)}
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentAddItemBinding.inflate(inflater, container, false)
+
         var isNew = true
         binding.tvOpenMenu.setOnClickListener{
             showMenu(it, R.menu.menu_importance)
         }
         isDeadlineNeed(binding.swDeadline)
-        binding.tabButtons.setNavigationOnClickListener {
+        binding.tabAddInc.tabButtons.setNavigationOnClickListener {
             findNavController().navigate(R.id.action_addItemFragment_to_todosFragment)
         }
         binding.btnDelete.setOnClickListener {
@@ -48,7 +48,7 @@ class AddItemFragment : Fragment() {
 
         saveTodoItem(isNew)
 
-        return view
+        return binding.root
     }
 
 
@@ -127,8 +127,8 @@ class AddItemFragment : Fragment() {
     }
 
     fun saveTodoItem(isNew : Boolean) {
-        binding.tabButtons.inflateMenu(R.menu.menu_add_page)
-        binding.tabButtons.setOnMenuItemClickListener {
+        binding.tabAddInc.tabButtons.inflateMenu(R.menu.menu_add_page)
+        binding.tabAddInc.tabButtons.setOnMenuItemClickListener {
             when(it.itemId){
                 R.id.btnSave -> {
                     if (!viewmodel.currentItem.text.isEmpty()) {

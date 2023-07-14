@@ -7,21 +7,9 @@
     tools:context=".ui.AddItemFragment"
     android:background="@color/primary_back">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/tabAdd"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/primary_back"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-        <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/tabButtons"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            app:menu="@menu/menu_add_page"
-            app:navigationIcon="@drawable/ic_close" />
-    </com.google.android.material.appbar.AppBarLayout>
+    <include
+        android:id="@+id/tabAddInc"
+        layout="@layout/toolbar_add_item"/>
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/etText"
@@ -34,11 +22,11 @@
         app:boxBackgroundMode="none"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tabAdd">
+        app:layout_constraintTop_toBottomOf="@+id/tabAddInc">
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etTodo"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="60dp"
             android:background="@drawable/bg_edittext"
             android:gravity="top"
             android:lines="3"
